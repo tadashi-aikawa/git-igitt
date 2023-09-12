@@ -576,7 +576,11 @@ fn run(
                                     _ => app.open_search(),
                                 }
                             }
-                            KeyCode::F(3) => match app.active_view {
+                            KeyCode::Char('/') => match app.active_view {
+                                ActiveView::Models | ActiveView::Search | ActiveView::Help(_) => {}
+                                _ => app.open_search(),
+                            },
+                            KeyCode::F(3) | KeyCode::Char('n') => match app.active_view {
                                 ActiveView::Models | ActiveView::Search | ActiveView::Help(_) => {}
                                 _ => {
                                     if app.search_term.is_none() {
@@ -586,11 +590,6 @@ fn run(
                                     }
                                 }
                             },
-                            KeyCode::Char('n') => {
-                                let reset = app.diff_options.diff_mode == DiffMode::Diff;
-                                reload_file = app.set_diff_mode(DiffMode::New)?;
-                                reset_scroll = reset;
-                            }
                             KeyCode::Char('d') => {
                                 reload_file = app.set_diff_mode(DiffMode::Diff)?;
                             }
@@ -615,18 +614,33 @@ fn run(
                                 reload_file = app.on_minus()?;
                                 reset_scroll = false;
                             }
-
-                            KeyCode::Up => {
+                            KeyCode::Up | KeyCode::Char('k') => {
                                 let (rd, rf) = app.on_up(
-                                    event.modifiers.contains(KeyModifiers::SHIFT),
+                                    false, // XXX
                                     event.modifiers.contains(KeyModifiers::CONTROL),
                                 )?;
                                 reload_diffs = rd;
                                 reload_file = rf;
                             }
-                            KeyCode::Down => {
+                            KeyCode::PageUp => {
+                                let (rd, rf) = app.on_up(
+                                    true, // XXX
+                                    event.modifiers.contains(KeyModifiers::CONTROL),
+                                )?;
+                                reload_diffs = rd;
+                                reload_file = rf;
+                            }
+                            KeyCode::Down | KeyCode::Char('j') => {
                                 let (rd, rf) = app.on_down(
-                                    event.modifiers.contains(KeyModifiers::SHIFT),
+                                    false,
+                                    event.modifiers.contains(KeyModifiers::CONTROL),
+                                )?;
+                                reload_diffs = rd;
+                                reload_file = rf;
+                            }
+                            KeyCode::PageDown => {
+                                let (rd, rf) = app.on_down(
+                                    true, // XXX
                                     event.modifiers.contains(KeyModifiers::CONTROL),
                                 )?;
                                 reload_diffs = rd;

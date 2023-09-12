@@ -231,7 +231,7 @@ impl App {
     }
 
     pub fn on_up(&mut self, is_shift: bool, is_ctrl: bool) -> Result<(bool, bool), String> {
-        let step = if is_shift { 10 } else { 1 };
+        let step = if is_shift { 30 } else { 1 };
         match self.active_view {
             ActiveView::Graph => {
                 if is_ctrl {
@@ -282,7 +282,7 @@ impl App {
     }
 
     pub fn on_down(&mut self, is_shift: bool, is_ctrl: bool) -> Result<(bool, bool), String> {
-        let step = if is_shift { 10 } else { 1 };
+        let step = if is_shift { 30 } else { 1 };
         match self.active_view {
             ActiveView::Graph => {
                 if is_ctrl {
