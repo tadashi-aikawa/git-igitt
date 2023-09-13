@@ -1,7 +1,9 @@
 use crate::util::ctrl_chars::CtrlChars;
 use crate::widgets::branches_view::BranchItem;
 use crate::widgets::list::StatefulList;
+use crossterm::{cursor, ExecutableCommand};
 use git_graph::graph::GitGraph;
+use std::io::stdout;
 use std::iter::Iterator;
 use tui::buffer::Buffer;
 use tui::layout::Rect;
@@ -163,13 +165,39 @@ impl<'a> StatefulWidget for GraphView<'a> {
             selected
         };
 
+        stdout().execute(cursor::MoveTo(150, 20));
+        stdout().execute(crossterm::style::Print(format!(
+            "move_to_selected: {:8}",
+            move_to_selected
+        )));
+        stdout().execute(cursor::MoveTo(150, 21));
+        stdout().execute(crossterm::style::Print(format!(
+            "SCROLL_MARGIN: {:8}",
+            SCROLL_MARGIN
+        )));
+        stdout().execute(cursor::MoveTo(150, 22));
+        stdout().execute(crossterm::style::Print(format!(
+            "state.graph_lines.len(): {:8}",
+            state.graph_lines.len()
+        )));
+        stdout().execute(cursor::MoveTo(150, 23));
+        stdout().execute(crossterm::style::Print(format!(
+            "selected_index: {:8}",
+            selected_index
+        )));
+        stdout().execute(cursor::MoveTo(150, 24));
+        stdout().execute(crossterm::style::Print(format!(
+            "state.indice.len(): {:8}",
+            state.indices.len()
+        )));
         let move_to_end = if selected_index >= state.indices.len() - 1 {
             state.graph_lines.len() - 1
         } else {
-            (state.indices[selected_index + 1] - 1).clamp(
-                move_to_selected + SCROLL_MARGIN,
-                state.graph_lines.len() - 1,
-            )
+            state.indices[selected_index + 1] - 1
+            // (state.indices[selected_index + 1] - 1).clamp(
+            //     move_to_selected + SCROLL_MARGIN,
+            //     state.graph_lines.len() - 1,
+            // )
         };
         let move_to_start = move_to_selected.saturating_sub(SCROLL_MARGIN);
 
