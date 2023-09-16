@@ -520,7 +520,7 @@ fn run(
                                 reload_file = app.toggle_syntax_highlight()?;
                                 reset_scroll = false
                             }
-                            KeyCode::Char('h') => app.show_help(),
+                            KeyCode::Char('?') => app.show_help(),
                             KeyCode::F(1) => app.show_help(),
                             KeyCode::Char('m') => match app.active_view {
                                 ActiveView::Models | ActiveView::Search | ActiveView::Help(_) => {}
@@ -531,7 +531,7 @@ fn run(
                                 }
                             },
                             KeyCode::Char('r') => app = app.reload(&settings, max_commits)?,
-                            KeyCode::Char('l') => {
+                            KeyCode::Tab => {
                                 if event.modifiers.contains(KeyModifiers::CONTROL) {
                                     app.toggle_line_numbers()?;
                                 } else {
@@ -648,17 +648,16 @@ fn run(
                             }
                             KeyCode::Home => reload_diffs = app.on_home()?,
                             KeyCode::End => reload_diffs = app.on_end()?,
-                            KeyCode::Left => app.on_left(
+                            KeyCode::Left | KeyCode::Char('h') => app.on_left(
                                 event.modifiers.contains(KeyModifiers::SHIFT),
                                 event.modifiers.contains(KeyModifiers::CONTROL),
                             ),
-                            KeyCode::Right => {
+                            KeyCode::Right | KeyCode::Char('l') => {
                                 reload_file = app.on_right(
                                     event.modifiers.contains(KeyModifiers::SHIFT),
                                     event.modifiers.contains(KeyModifiers::CONTROL),
                                 )?
                             }
-                            KeyCode::Tab => app.on_tab(),
                             KeyCode::Esc => reload_file = app.on_esc()?,
                             KeyCode::Enter => {
                                 if app.active_view == ActiveView::Models {
